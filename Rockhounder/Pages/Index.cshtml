@@ -36,7 +36,7 @@
 </head>
 <body>
     <div class="header">
-        <a href="#default" class="logo">CompanyLogo</a>
+        <a href="#default" class="logo">Colorado Rockhounding Spots</a>
     </div>
 
     <div id='map' class="center-div">
@@ -80,6 +80,7 @@
     <script src="https://cdn.jsdelivr.net/npm/places.js@1.4.15"></script>
 
     <script>
+
     mapboxgl.accessToken = '@Model.MapboxAccessToken';
     var map = new mapboxgl.Map({
         container: 'map',
@@ -128,7 +129,6 @@
                     }
                 }
             });
-
             map.addLayer({
                 id: 'cluster-count',
                 type: 'symbol',
@@ -141,36 +141,61 @@
                 }
             });
 
-            map.addLayer({
-                id: 'airport',
-                type: 'circle',
-                source: 'airports',
-                filter: ['!has', 'point_count'],
 
-                'paint': {
-                    // make circles larger as the user zooms from z12 to z22
-                    'circle-radius': 6,
-                    'circle-stroke-width': 1,
+            map.loadImage('https://vignette.wikia.nocookie.net/thetekkit/images/9/9e/Brass_Ingot.png/revision/latest?cb=20121227232312',
+                function (error, image) {
+                    if (error) throw error;
+               map.addImage('gold', image);
+                });
 
-                'circle-color': [
-                    'match',
-                    ['get', 'minerals'],
-                    'Gold', '#fbb03b',
-                    'Silver', '#ccc',
-                    'Lead', '#ccc',
-                    'Copper', '#f4a460',
-                    'Uranium', '#8b0000',
-                    /* other */ '#1e90ff'
-                    ]
-                    }
-            });
+            map.loadImage('https://vignette.wikia.nocookie.net/thetekkit/images/0/0b/Silver.png/revision/latest?cb=20121024051558',
+                function (error, image) {
+                    if (error) throw error;
+               map.addImage('silver', image);
+                });
+
+                    map.addLayer({
+                        "id": "airport",
+                        "type": "symbol",
+                        "source": "airports",
+                        "filter": ['!has', 'point_count'],
+
+                        "layout": 
+                        {
+                            "icon-image": "gold",
+                            "icon-size": 0.1
+                        }
+                    });
+                            
+            //map.addLayer({
+            //    id: 'airport',
+            //    type: 'circle',
+            //    source: 'airports',
+            //    filter: ['!has', 'point_count'],
+
+            //    //'paint': {
+            //    //    // make circles larger as the user zooms from z12 to z22
+            //    //    'circle-radius': 6,
+            //    //    'circle-stroke-width': 1,
+
+            //    //'circle-color': [
+            //    //    'match',
+            //    //    ['get', 'minerals'],
+            //    //    'Gold', '#fbb03b',
+            //    //    'Silver', '#ccc',
+            //    //    'Lead', '#ccc',
+            //    //    'Copper', '#f4a460',
+            //    //    'Uranium', '#8b0000',
+            //    //    /* other */ '#1e90ff'
+            //    //    ]
+            //    //    }
+            //});
 
             // Create a popup, but don't add it to the map yet.
             var popup = new mapboxgl.Popup({
                 closeButton: false,
                 closeOnClick: true
             });
-
             map.on('mouseenter', 'airport', function(e) {
                 // Change the cursor style as a UI indicator.
                 map.getCanvas().style.cursor = 'pointer';
@@ -181,12 +206,10 @@
                     .setHTML(e.features[0].properties.name)
                     .addTo(map);
             });
-
             map.on('mouseleave', 'airport', function() {
                 map.getCanvas().style.cursor = '';
                 popup.remove();
             });
-
             map.on('click', 'airport', e => {
 
                 var name = e.features[0].properties.name;
@@ -229,14 +252,12 @@
         container: document.querySelector('#address-input'),
         type: 'city'
     });
-
     placesAutocomplete.on('change', e => {
         map.flyTo({
             center: [ e.suggestion.latlng.lng, e.suggestion.latlng.lat],
             zoom: 9
         });
     });
-
     document.querySelector('#info-card-close-button').addEventListener('click', function(event) {
         document.querySelector('#info-card').style.display = 'none';
     });
